@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mahera's Pocket</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-bg"></div>
+
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">৳</div>
+        <div>
+          <p class="eyebrow">My finance tracker</p>
+          <h1>Mahera's Pocket</h1>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-link active" data-section="dashboard">Dashboard</button>
+        <button class="nav-link" data-section="calendar">Calendar Preview</button>
+        <button class="nav-link" data-section="transactions">Transactions</button>
+        <button class="nav-link" data-section="analysis">Analysis</button>
+        <button class="nav-link" data-section="settings">Settings</button>
+      </nav>
+
+      <div class="sidebar-card">
+        <span>Selected month</span>
+        <strong id="sidebarMonth">This month</strong>
+        <small id="sidebarMiniSummary">৳0 net result</small>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Current view</p>
+          <h2 id="currentMonthLabel">Month</h2>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-btn" id="prevGlobalMonth" title="Previous month">‹</button>
+          <button class="ghost-btn" id="todayBtn">Today</button>
+          <button class="ghost-btn" id="nextGlobalMonth" title="Next month">›</button>
+        </div>
+      </header>
+
+      <section class="quick-add glass-panel">
+        <div class="quick-add-header">
+          <p class="eyebrow">Quick add</p>
+          <h3>Record money movement</h3>
+        </div>
+        <div class="quick-grid" id="quickGrid"></div>
+      </section>
+
+      <section id="dashboard" class="section active">
+        <div class="summary-grid" id="summaryCards"></div>
+
+        <div class="content-grid">
+          <section class="glass-panel chart-card">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Spending mix</p>
+                <h3>Category Breakdown</h3>
+              </div>
+              <span id="breakdownTotal">৳0</span>
+            </div>
+            <div class="chart-tabs" id="pieFilterTabs">
+              <button class="tab-btn active" data-period="month">Month</button>
+              <button class="tab-btn" data-period="week">Week</button>
+              <button class="tab-btn" data-period="day">Day</button>
+            </div>
+            <canvas id="categoryChart" width="420" height="240"></canvas>
+            <div class="legend" id="categoryLegend"></div>
+          </section>
+
+          <section class="glass-panel chart-card">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Bar chart</p>
+                <h3 id="barChartTitle">Weekly Spending</h3>
+              </div>
+              <select id="barMode" class="field compact">
+                <option value="daily">Daily (7 days)</option>
+                <option value="weekly">Weekly (8 wks)</option>
+                <option value="monthly">Monthly (6 mo)</option>
+              </select>
+            </div>
+            <canvas id="barChart" width="560" height="260"></canvas>
+            <div class="bar-legend">
+              <span><i class="dot" style="background:#ff7b8a"></i>Expense</span>
+              <span><i class="dot" style="background:#54e0a3"></i>Savings</span>
+              <span><i class="dot" style="background:#b59cff"></i>Income</span>
+            </div>
+          </section>
+
+          <section class="glass-panel chart-card wide">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Trend</p>
+                <h3>Daily Spending Trend</h3>
+              </div>
+              <span id="trendRange">Current month</span>
+            </div>
+            <canvas id="lineChart" width="980" height="260"></canvas>
+          </section>
+
+          <section class="glass-panel suggestions-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Smart suggestions</p>
+                <h3>Friendly insights</h3>
+              </div>
+            </div>
+            <div id="suggestionsList" class="suggestions-list"></div>
+          </section>
+
+          <section class="glass-panel recent-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Latest records</p>
+                <h3>Recent Transactions</h3>
+              </div>
+            </div>
+            <div id="recentTransactions" class="transaction-list compact-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="calendar" class="section">
+        <div class="calendar-layout">
+          <section class="glass-panel calendar-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Real-time calendar</p>
+                <h3 id="calendarMonthLabel">Calendar</h3>
+              </div>
+              <div class="inline-actions">
+                <button class="ghost-btn" id="prevCalendarMonth">‹</button>
+                <button class="ghost-btn" id="nextCalendarMonth">›</button>
+              </div>
+            </div>
+            <div class="weekday-row">
+              <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </section>
+
+          <aside class="glass-panel preview-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Selected day</p>
+                <h3 id="selectedDayTitle">Today</h3>
+              </div>
+            </div>
+            <div class="mini-metrics" id="dayPreviewMetrics"></div>
+            <div id="dayTransactions" class="transaction-list compact-list"></div>
+          </aside>
+        </div>
+
+        <div class="preview-grid">
+          <section class="glass-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Week preview</p>
+                <h3 id="weekPreviewTitle">Selected week</h3>
+              </div>
+            </div>
+            <div class="mini-metrics" id="weekPreviewMetrics"></div>
+            <div class="category-bars" id="weekCategoryBreakdown"></div>
+            <div id="weekTransactions" class="transaction-list compact-list"></div>
+          </section>
+
+          <section class="glass-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Month preview</p>
+                <h3 id="monthPreviewTitle">Selected month</h3>
+              </div>
+            </div>
+            <div class="mini-metrics" id="monthPreviewMetrics"></div>
+            <div class="category-bars" id="monthCategoryBreakdown"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="transactions" class="section">
+        <section class="glass-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Find records</p>
+              <h3>Transaction History</h3>
+            </div>
+            <div class="topbar-actions">
+              <div class="export-group">
+                <button class="ghost-btn" id="exportCsvBtn">CSV</button>
+                <button class="ghost-btn" id="exportExcelBtn">Excel</button>
+                <button class="ghost-btn" id="exportPdfBtn">PDF</button>
+              </div>
+              <span id="historyCount">0 records</span>
+            </div>
+          </div>
+          <div class="filters">
+            <input id="searchInput" class="field" type="search" placeholder="Search note, category, or type">
+            <select id="periodFilter" class="field">
+              <option value="all">All dates</option>
+              <option value="day">Selected day</option>
+              <option value="week">Selected week</option>
+              <option value="month">Selected month</option>
+            </select>
+            <select id="categoryFilter" class="field">
+              <option value="all">All categories</option>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Books">Books</option>
+              <option value="Savings">Savings</option>
+              <option value="Income">Income</option>
+            </select>
+            <select id="typeFilter" class="field">
+              <option value="all">All types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+              <option value="savings">Savings</option>
+            </select>
+            <input id="monthFilter" class="field" type="month">
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="sortable" data-col="date">Date <span class="sort-icon">↕</span></th>
+                  <th class="sortable" data-col="type">Type <span class="sort-icon">↕</span></th>
+                  <th class="sortable" data-col="category">Category <span class="sort-icon">↕</span></th>
+                  <th>Note</th>
+                  <th class="sortable" data-col="amount">Amount <span class="sort-icon">↕</span></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="transactionTableBody"></tbody>
+            </table>
+          </div>
+          <div id="historyEmpty" class="empty-state hidden">No transactions match the current filters.</div>
+        </section>
+      </section>
+
+      <section id="analysis" class="section">
+        <div class="analysis-grid">
+          <section class="glass-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">This week vs last week</p>
+                <h3>Weekly Analysis</h3>
+              </div>
+            </div>
+            <div id="weeklyAnalysis" class="analysis-list"></div>
+          </section>
+
+          <section class="glass-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">This month vs last month</p>
+                <h3>Monthly Analysis</h3>
+              </div>
+            </div>
+            <div id="monthlyAnalysis" class="analysis-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="settings" class="section">
+        <section class="glass-panel settings-panel">
+          <div>
+            <p class="eyebrow">Offline storage</p>
+            <h3>Settings</h3>
+            <p class="muted">Transactions are stored only in this browser with localStorage.</p>
+          </div>
+          <div class="settings-actions">
+            <label class="toggle-row">
+              <input type="checkbox" id="compactToggle">
+              <span>Compact view</span>
+            </label>
+            <label class="toggle-row">
+              <span>Savings goal (% of income)</span>
+              <input id="savingsGoalInput" class="field" type="number" min="1" max="100" value="20" style="width:72px;min-height:36px;padding:6px 10px">
+            </label>
+            <button class="ghost-btn" id="sampleDataBtn">Load Sample Data</button>
+            <button class="danger-btn" id="resetDataBtn">Clear All Data</button>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal hidden" id="transactionModal" aria-hidden="true">
+    <div class="modal-card glass-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow" id="modalMode">Quick add</p>
+          <h3 id="modalTitle">Add Transaction</h3>
+        </div>
+        <button class="icon-btn" id="closeModal" title="Close">×</button>
+      </div>
+      <form id="transactionForm">
+        <input type="hidden" id="editingId">
+        <label>
+          Category
+          <select id="transactionCategory" class="field">
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Books">Books</option>
+            <option value="Savings">Savings</option>
+            <option value="Income">Income</option>
+          </select>
+        </label>
+        <label>
+          Amount
+          <input id="transactionAmount" class="field" type="number" min="1" step="1" placeholder="1200">
+        </label>
+        <label>
+          Date
+          <input id="transactionDate" class="field" type="date">
+        </label>
+        <label>
+          Note
+          <input id="transactionNote" class="field" type="text" maxlength="80" placeholder="Optional note">
+        </label>
+        <div id="formError" class="form-error"></div>
+        <button class="primary-btn" type="submit">Save Transaction</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
